@@ -2,9 +2,10 @@
 name = "whatsforensics"
 version = "0.1.0"
 description = "WhatsForensics — forensic SQLite analyzer for mobile messaging databases"
-authors = ["WhatsForensics team"]
+authors = ["Wixa Develop"]
 edition = "2021"
-license = "MIT OR Apache-2.0"
+# Custom Non-Commercial License (see ../LICENSE at repo root).
+license-file = "../LICENSE"
 publish = false
 
 [lib]

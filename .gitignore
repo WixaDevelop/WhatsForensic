@@ -144,3 +144,28 @@ coverage/
 *.profraw
 *.profdata
 criterion/
+
+# ---------------------------------------------------------------------
+# Python (preserved from remote initial template — not used by this
+# project, but kept harmless in case Python tools are added later).
+# ---------------------------------------------------------------------
+__pycache__/
+*.py[codz]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+downloads/
+eggs/
+.eggs/
+sdist/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+.venv
+env/
+venv/
+ENV/
