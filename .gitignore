@@ -81,6 +81,11 @@ dist-ssr/
 .vite/
 *.local
 
+# TypeScript / Vite build artifacts (composite + emit-on-build).
+*.tsbuildinfo
+vite.config.d.ts
+vite.config.js
+
 # ---------------------------------------------------------------------
 # Editors and OS
 # ---------------------------------------------------------------------
