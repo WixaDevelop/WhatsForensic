@@ -45,6 +45,7 @@ pub fn run() {
             commands::evidence_cmd::evidence_verify,
             commands::evidence_cmd::task_cancel,
             commands::evidence_cmd::default_workspace_root,
+            commands::db_cmd::evidence_introspect,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

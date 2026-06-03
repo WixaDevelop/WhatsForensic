@@ -9,6 +9,7 @@
 
 pub mod analysis_cmd;
 pub mod case_cmd;
+pub mod db_cmd;
 pub mod evidence_cmd;
 pub mod export_cmd;
 pub mod system_cmd;

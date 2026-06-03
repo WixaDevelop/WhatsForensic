@@ -16,7 +16,9 @@ import type {
   EvidenceSummary,
   IngestProgressEvent,
   IntegrityReport,
+  OpenMode,
   ProgressEvent,
+  SchemaSnapshot,
   SystemInfo,
 } from '../types/domain';
 
@@ -89,6 +91,17 @@ export async function verifyEvidence(evidenceId: string): Promise<IntegrityRepor
 
 export async function cancelTask(runId: string): Promise<boolean> {
   return invoke<boolean>('task_cancel', { runId });
+}
+
+// ---------------------------------------------------------------------------
+// Schema (Fase 2)
+// ---------------------------------------------------------------------------
+
+export async function introspectEvidence(
+  evidenceId: string,
+  mode: OpenMode,
+): Promise<SchemaSnapshot> {
+  return invoke<SchemaSnapshot>('evidence_introspect', { input: { evidenceId, mode } });
 }
 
 // ---------------------------------------------------------------------------

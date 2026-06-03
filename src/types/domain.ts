@@ -142,9 +142,50 @@ export interface IntegrityReport {
 }
 
 // ---------------------------------------------------------------------------
-// Modelo de dominio (placeholders para Fase 2+)
+// Schema introspection (Fase 2)
 // ---------------------------------------------------------------------------
 
-export type AnalysisMode = 'committed_only' | 'with_wal';
+export type OpenMode = 'committed_only' | 'with_wal';
+
+export interface ColumnInfo {
+  cid: number;
+  name: string;
+  type: string;
+  notnull: boolean;
+  pk: boolean;
+  defaultValue?: string | null;
+}
+
+export interface TableInfo {
+  name: string;
+  kind: string;
+  sql: string;
+  columns: ColumnInfo[];
+  rowCount: number;
+}
+
+export interface IndexInfo {
+  name: string;
+  table: string;
+  unique: boolean;
+  sql?: string | null;
+}
+
+export interface SchemaSnapshot {
+  sqliteVersion: string;
+  userVersion: number;
+  applicationId: number;
+  pageCount: number;
+  pageSize: number;
+  journalMode: string;
+  tables: Record<string, TableInfo>;
+  indexes: IndexInfo[];
+}
+
+// ---------------------------------------------------------------------------
+// Modelo de dominio (placeholders para Fase 3+)
+// ---------------------------------------------------------------------------
+
+export type AnalysisMode = OpenMode;
 export type MessageDirection = 'incoming' | 'outgoing' | 'unknown';
 export type TimestampRawFormat = 'mac_absolute' | 'unix_s' | 'unix_ms';
