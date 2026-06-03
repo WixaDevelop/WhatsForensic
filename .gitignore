@@ -1,0 +1,141 @@
+# =====================================================================
+# Forensic SQLite Analyzer - .gitignore
+# =====================================================================
+
+# ---------------------------------------------------------------------
+# CRITICAL: Never commit forensic evidence to the repository
+# ---------------------------------------------------------------------
+# Real evidence files must never be committed under any circumstance.
+# Tests must use synthetic fixtures generated in tests/fixtures/.
+
+# Forensic database files (any extension typically used)
+*.sqlite
+*.sqlite3
+*.db
+*.db-wal
+*.db-shm
+*.db-journal
+*.storedata
+*.storedata-wal
+*.storedata-shm
+
+# WhatsApp specific
+msgstore.db*
+ChatStorage.sqlite*
+wa.db*
+
+# CallHistory specific
+CallHistory.storedata*
+CallHistory.sqlite*
+
+# Encrypted backups
+*.crypt12
+*.crypt14
+*.crypt15
+
+# iOS backup artifacts
+Manifest.db*
+Manifest.plist
+Info.plist
+
+# Case workspaces (entire directories)
+/workspaces/
+/cases/
+**/case_data/
+
+# Reports generated during development
+*.xlsx
+!docs/**/*.xlsx          # allow example/template reports under docs/
+!tests/fixtures/**/*.xlsx
+
+# Exception: synthetic fixtures may live ONLY in tests/fixtures/ and must
+# be reviewed before commit. Generated outputs of `tests/fixtures/gen/` go
+# to `tests/fixtures/output/`, which is NOT tracked (they are reproducible
+# from the generator). To commit a curated fixture, place it elsewhere
+# under tests/fixtures/ outside of `output/`.
+!tests/fixtures/**/*.sqlite
+!tests/fixtures/**/*.db
+!tests/fixtures/**/synthetic_*.db
+tests/fixtures/output/
+
+# ---------------------------------------------------------------------
+# Rust / Cargo
+# ---------------------------------------------------------------------
+/target/
+**/target/
+# Keep Cargo.lock versioned for reproducibility (do not ignore it)
+
+# ---------------------------------------------------------------------
+# Tauri
+# ---------------------------------------------------------------------
+/src-tauri/target/
+/src-tauri/gen/
+/src-tauri/WixTools/
+
+# ---------------------------------------------------------------------
+# Node / Vite / Frontend
+# ---------------------------------------------------------------------
+node_modules/
+dist/
+dist-ssr/
+.vite/
+*.local
+
+# ---------------------------------------------------------------------
+# Editors and OS
+# ---------------------------------------------------------------------
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+.idea/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ---------------------------------------------------------------------
+# Logs and temporary files
+# ---------------------------------------------------------------------
+*.log
+logs/
+tmp/
+*.tmp
+*.bak
+
+# ---------------------------------------------------------------------
+# Build artifacts
+# ---------------------------------------------------------------------
+*.exe
+*.msi
+*.dmg
+*.AppImage
+*.deb
+*.rpm
+
+# ---------------------------------------------------------------------
+# Environment and secrets
+# ---------------------------------------------------------------------
+.env
+.env.local
+.env.*.local
+*.key
+*.pem
+*.pfx
+*.p12
+
+# ---------------------------------------------------------------------
+# Claude Code local state
+# ---------------------------------------------------------------------
+.claude/projects/
+.claude/.cache/
+# Note: .claude/settings.json IS versioned (team config)
+# Note: .claude/commands/ and .claude/skills/ ARE versioned
+
+# ---------------------------------------------------------------------
+# Coverage and benchmarks
+# ---------------------------------------------------------------------
+coverage/
+*.profraw
+*.profdata
+criterion/

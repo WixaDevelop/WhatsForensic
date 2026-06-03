@@ -1,0 +1,64 @@
+[package]
+name = "whatsforensics"
+version = "0.1.0"
+description = "WhatsForensics — forensic SQLite analyzer for mobile messaging databases"
+authors = ["WhatsForensics team"]
+edition = "2021"
+license = "MIT OR Apache-2.0"
+publish = false
+
+[lib]
+# The `_lib` suffix avoids a Windows-only name conflict between the bin and lib.
+name = "whatsforensics_lib"
+crate-type = ["staticlib", "cdylib", "rlib"]
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+# Tauri runtime
+tauri = { version = "2", features = [] }
+
+# Serialization
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+
+# Errors
+thiserror = "2"
+anyhow = "1"
+
+# Async runtime (Tauri uses tokio internally; we depend on it explicitly for our async APIs)
+tokio = { version = "1", features = ["fs", "io-util", "macros", "rt", "rt-multi-thread", "sync", "time"] }
+tokio-util = "0.7"
+
+# Logging
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter", "json"] }
+tracing-appender = "0.2"
+
+# Forensics core
+sha2 = "0.10"
+rusqlite = { version = "0.40", features = ["bundled"] }
+rust_xlsxwriter = "0.95"
+
+# IDs and time
+uuid = { version = "1", features = ["v4", "serde"] }
+chrono = { version = "0.4", default-features = false, features = ["clock", "serde", "std"] }
+chrono-tz = "0.10"
+
+# Filesystem
+walkdir = "2"
+fs2 = "0.4"  # cross-platform file locking (Win + Linux)
+
+# Schema mapping (externalized per-version TOML files)
+toml = "1"
+
+[dev-dependencies]
+tempfile = "3"
+
+[profile.release]
+codegen-units = 1
+lto = true
+opt-level = "s"
+panic = "abort"
+strip = true

@@ -1,0 +1,15 @@
+dist
+node_modules
+src-tauri/target
+src-tauri/gen
+package-lock.json
+*.min.js
+*.lock
+
+# Markdown docs: stable content (bullets, code blocks, tables are sensitive).
+*.md
+
+# YAML CI workflows: indentation and quoting are sensitive; managed manually.
+.github/workflows/*.yml
+.github/workflows/*.yaml
+

@@ -1,0 +1,41 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "WhatsForensics",
+  "version": "0.1.0",
+  "identifier": "com.whatsforensics.app",
+  "build": {
+    "beforeDevCommand": "npm run dev",
+    "devUrl": "http://localhost:1420",
+    "beforeBuildCommand": "npm run build",
+    "frontendDist": "../dist"
+  },
+  "app": {
+    "windows": [
+      {
+        "title": "WhatsForensics",
+        "width": 1280,
+        "height": 800,
+        "minWidth": 1024,
+        "minHeight": 700,
+        "resizable": true
+      }
+    ],
+    "security": {
+      "csp": null
+    }
+  },
+  "bundle": {
+    "active": true,
+    "targets": "all",
+    "icon": [
+      "icons/32x32.png",
+      "icons/128x128.png",
+      "icons/128x128@2x.png",
+      "icons/icon.icns",
+      "icons/icon.ico"
+    ],
+    "category": "Utility",
+    "shortDescription": "Forensic SQLite analyzer for mobile messaging databases",
+    "longDescription": "WhatsForensics is a desktop tool for the forensic analysis of SQLite databases extracted from mobile devices (WhatsApp iOS/Android, CallHistory iOS). It produces reproducible XLSX reports while preserving the original evidence as read-only and maintaining a hash-chained audit log."
+  }
+}

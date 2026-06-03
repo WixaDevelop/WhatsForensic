@@ -1,0 +1,157 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+# Cancel in-progress runs when a new commit is pushed to the same ref.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  CARGO_TERM_COLOR: always
+  RUSTFLAGS: "-D warnings"
+
+jobs:
+  # ---------------------------------------------------------------------------
+  # Backend (Rust): fmt + clippy + test on Linux and Windows.
+  # ---------------------------------------------------------------------------
+  backend:
+    name: Backend / ${{ matrix.platform }}
+    strategy:
+      fail-fast: false
+      matrix:
+        platform: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.platform }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Tauri Linux dependencies
+        if: matrix.platform == 'ubuntu-latest'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            libwebkit2gtk-4.1-dev \
+            libsoup-3.0-dev \
+            librsvg2-dev \
+            libgtk-3-dev \
+            libayatana-appindicator3-dev \
+            libssl-dev \
+            pkg-config \
+            build-essential
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt, clippy
+
+      - name: Cache Rust build artifacts (src-tauri)
+        uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: src-tauri -> target
+          key: ${{ matrix.platform }}-src-tauri
+
+      - name: cargo fmt --check
+        working-directory: src-tauri
+        run: cargo fmt --all -- --check
+
+      - name: cargo clippy
+        working-directory: src-tauri
+        run: cargo clippy --all-targets -- -D warnings
+
+      - name: cargo test
+        working-directory: src-tauri
+        run: cargo test --all
+
+  # ---------------------------------------------------------------------------
+  # Fixtures generator: standalone Rust crate. Builds + smoke-runs.
+  # ---------------------------------------------------------------------------
+  fixtures:
+    name: Fixtures generator
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt, clippy
+
+      - name: Cache Rust build artifacts (fixtures)
+        uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: tests/fixtures/gen -> target
+          key: fixtures
+
+      - name: cargo fmt --check
+        working-directory: tests/fixtures/gen
+        run: cargo fmt --all -- --check
+
+      - name: cargo clippy
+        working-directory: tests/fixtures/gen
+        run: cargo clippy --all-targets -- -D warnings
+
+      - name: Smoke run the generator
+        working-directory: tests/fixtures/gen
+        run: cargo run --quiet -- "${{ runner.temp }}/wf-fixtures"
+
+      - name: Sanity-check produced files
+        run: |
+          ls -la "${{ runner.temp }}/wf-fixtures"
+          test -f "${{ runner.temp }}/wf-fixtures/mock-whatsapp-ios.sqlite"
+          test -f "${{ runner.temp }}/wf-fixtures/mock-whatsapp-android.db"
+          test -f "${{ runner.temp }}/wf-fixtures/mock-with-wal.db"
+          test -f "${{ runner.temp }}/wf-fixtures/mock-with-wal.db-wal"
+          test -f "${{ runner.temp }}/wf-fixtures/mock-with-gaps.db"
+
+  # ---------------------------------------------------------------------------
+  # Frontend (TypeScript): typecheck + lint + format + build.
+  # ---------------------------------------------------------------------------
+  frontend:
+    name: Frontend
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - name: npm ci
+        run: npm ci
+
+      - name: typecheck
+        run: npm run typecheck
+
+      - name: lint
+        run: npm run lint
+
+      - name: format:check
+        run: npm run format:check
+
+      - name: build
+        run: npm run build
+
+  # ---------------------------------------------------------------------------
+  # Security audit of Rust dependencies. Non-blocking findings are reviewed
+  # per-release (see CLAUDE.md root, risk matrix).
+  # ---------------------------------------------------------------------------
+  audit:
+    name: Security audit (cargo-audit)
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - name: Install cargo-audit
+        run: cargo install cargo-audit --locked
+      - name: Audit src-tauri
+        working-directory: src-tauri
+        run: cargo audit
+      - name: Audit fixtures generator
+        working-directory: tests/fixtures/gen
+        run: cargo audit

@@ -1,0 +1,14 @@
+[package]
+name = "wf-fixtures-gen"
+version = "0.1.0"
+edition = "2021"
+description = "Generates synthetic SQLite fixtures for WhatsForensics tests"
+publish = false
+
+[[bin]]
+name = "gen_fixture"
+path = "src/main.rs"
+
+[dependencies]
+rusqlite = { version = "0.40", features = ["bundled"] }
+anyhow = "1"
