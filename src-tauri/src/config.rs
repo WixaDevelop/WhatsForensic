@@ -4,9 +4,10 @@
 //! vía `tauri::State<AppState>`. Mantiene el caso actualmente abierto, su lock
 //! exclusivo y los handles de tareas async cancelables.
 
+use crate::parsers::common_model::ParsedEvidence;
 use crate::workspace::{layout::CasePaths, manifest::CaseManifest, manifest::LockHandle};
 use std::collections::HashMap;
-use std::sync::RwLock;
+use std::sync::{Arc, RwLock};
 use tokio_util::sync::CancellationToken;
 use uuid::Uuid;
 
@@ -15,6 +16,14 @@ pub struct OpenCase {
     pub manifest: CaseManifest,
     pub paths: CasePaths,
     pub _lock: LockHandle,
+}
+
+pub struct AnalysisRun {
+    pub run_id: String,
+    pub evidence_id: String,
+    pub parser_key: String,
+    pub mode: String,
+    pub parsed: Arc<ParsedEvidence>,
 }
 
 /// Estado compartido entre comandos.
@@ -26,6 +35,7 @@ pub struct OpenCase {
 pub struct AppState {
     pub current_case: RwLock<Option<OpenCase>>,
     pub tasks: RwLock<HashMap<String, CancellationToken>>,
+    pub analysis_runs: RwLock<HashMap<String, AnalysisRun>>,
 }
 
 impl AppState {

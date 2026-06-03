@@ -1,0 +1,34 @@
+# CallHistory iOS schema seed mapping (Z_ tables vía Core Data).
+#
+# Versión = "unknown" — todas las interpretaciones son seed.
+
+[meta]
+source = "callhistory_ios"
+version = "unknown"
+description = "Seed mapping for CallHistory.storedata / CallHistory.sqlite."
+verified = false
+
+[tables]
+required = ["ZCALLRECORD"]
+optional = ["ZRECENT", "Z_PRIMARYKEY"]
+
+# ZCALLRECORD.ZORIGINATED → dirección
+# 0 = incoming, 1 = outgoing (interpretación pública, no confirmada en lab).
+[direction]
+verified = false
+
+[direction.labels]
+"0" = "incoming"
+"1" = "outgoing"
+
+# ZCALLRECORD.ZCALLTYPE → tipo
+# Significados aproximados (variar entre versiones de iOS):
+[call_type]
+verified = false
+
+[call_type.labels]
+"0" = "voice"
+"1" = "facetime_audio"
+"4" = "facetime_video"
+"8" = "voip"
+"16" = "third_party_voip"

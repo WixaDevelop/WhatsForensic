@@ -1,0 +1,57 @@
+# WhatsApp iOS schema seed mapping.
+#
+# Versión = "unknown" porque los valores acá son **interpretaciones
+# públicamente conocidas pero NO verificadas contra evidencia real**.
+# Tan pronto como un analista confirme cada código contra una evidencia
+# con UI conocida, agregar una entrada nueva en `docs/SCHEMAS.md` con
+# el hash de esa evidencia y crear un archivo separado por versión real
+# (ej. `2.24.10.toml`) con `verified = true`.
+
+[meta]
+source = "whatsapp_ios"
+version = "unknown"
+description = "Seed mapping. All interpretations marked verified=false."
+verified = false
+
+# ---------------------------------------------------------------------------
+# Tablas esperadas.
+# ---------------------------------------------------------------------------
+
+[tables]
+required = ["ZWAMESSAGE", "ZWACHATSESSION"]
+optional = ["ZWAMEDIAITEM", "ZWAGROUPMEMBER", "ZWAVCARDMENTION"]
+
+# ---------------------------------------------------------------------------
+# Mapeo ZWAMESSAGE.ZMESSAGETYPE → significado interpretado.
+# ---------------------------------------------------------------------------
+
+[message_type]
+verified = false
+# Tipos que la app marca explícitamente como revocados.
+revocation_codes = [7]
+
+[message_type.labels]
+"0" = "text"
+"1" = "image"
+"2" = "video"
+"3" = "voice_message"
+"4" = "contact"
+"5" = "location"
+"6" = "system"
+"7" = "revoked"
+"8" = "document"
+"10" = "missed_call"
+"11" = "received_call"
+"14" = "sticker"
+"15" = "gif"
+
+# ---------------------------------------------------------------------------
+# Mapeo ZWAMESSAGE.ZISFROMME → dirección.
+# ---------------------------------------------------------------------------
+
+[direction]
+verified = true   # Esto sí es directo: 1 = outgoing, 0 = incoming.
+
+[direction.labels]
+"0" = "incoming"
+"1" = "outgoing"

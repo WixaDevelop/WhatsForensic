@@ -1,0 +1,52 @@
+# WhatsApp Android schema seed mapping.
+#
+# Versión = "unknown" — todas las interpretaciones son seed, no verificadas.
+
+[meta]
+source = "whatsapp_android"
+version = "unknown"
+description = "Seed mapping. All interpretations marked verified=false."
+verified = false
+
+[tables]
+required = ["message", "chat"]
+optional = ["message_media", "jid", "message_quoted"]
+
+# message.message_type → significado interpretado.
+# El esquema de Android cambió: pre-2021 usaba `media_wa_type` en una columna
+# distinta. Acá modelamos el campo `message_type` post-2021.
+[message_type]
+verified = false
+revocation_codes = [15]
+
+[message_type.labels]
+"0" = "text"
+"1" = "image"
+"2" = "voice_message"
+"3" = "video"
+"4" = "contact"
+"5" = "location"
+"7" = "system"
+"9" = "document"
+"13" = "gif"
+"15" = "deleted"
+"20" = "sticker"
+
+# message.key_from_me → dirección.
+[direction]
+verified = true
+
+[direction.labels]
+"0" = "incoming"
+"1" = "outgoing"
+
+# message.status (post-delivery): rangos de status conocidos públicamente.
+[status]
+verified = false
+
+[status.labels]
+"0" = "pending"
+"4" = "sent"
+"5" = "received"
+"6" = "read"
+"13" = "received_alt"
