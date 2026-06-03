@@ -54,6 +54,10 @@ pub fn run() {
             commands::analysis_cmd::analysis_query_conversations,
             commands::analysis_cmd::analysis_get_warnings,
             commands::analysis_cmd::analysis_list_runs,
+            commands::analysis_cmd::analysis_get_gaps,
+            commands::analysis_cmd::analysis_get_deleted_hints,
+            commands::analysis_cmd::analysis_get_stats,
+            commands::export_cmd::export_xlsx,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

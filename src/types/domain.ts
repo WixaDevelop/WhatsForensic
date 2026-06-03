@@ -183,9 +183,105 @@ export interface SchemaSnapshot {
 }
 
 // ---------------------------------------------------------------------------
-// Modelo de dominio (placeholders para Fase 3+)
+// Parsers (Fase 3+4)
 // ---------------------------------------------------------------------------
 
 export type AnalysisMode = OpenMode;
 export type MessageDirection = 'incoming' | 'outgoing' | 'unknown';
 export type TimestampRawFormat = 'mac_absolute' | 'unix_s' | 'unix_ms';
+
+export type ParserConfidence = 'none' | 'low' | 'medium' | 'high';
+
+export interface ParserDescriptor {
+  key: string;
+  displayName: string;
+}
+
+export interface ParserMatch {
+  key: string;
+  displayName: string;
+  confidence: ParserConfidence;
+}
+
+// ---------------------------------------------------------------------------
+// Analysis (Fase 5)
+// ---------------------------------------------------------------------------
+
+export interface AnalysisRunSummary {
+  runId: string;
+  evidenceId: string;
+  parserKey: string;
+  mode: AnalysisMode;
+  sourceKind: string;
+  schemaVersionUsed: string;
+  schemaVerified: boolean;
+  conversationCount: number;
+  messageCount: number;
+  callCount: number;
+  warningCount: number;
+  revokedCount: number;
+  gapCount: number;
+  deletedHintCount: number;
+}
+
+export interface ParsedMessage {
+  id: string;
+  conversationId: string;
+  sourcePk: number;
+  timestampUtc?: string | null;
+  timestampRaw?: number | null;
+  timestampRawFormat?: TimestampRawFormat | null;
+  sender?: string | null;
+  direction: MessageDirection;
+  body?: string | null;
+  messageTypeRaw?: number | null;
+  messageTypeInterpreted?: string | null;
+  messageTypeVerified: boolean;
+  isPossiblyRevoked: boolean;
+  rawRow: Record<string, unknown>;
+}
+
+export interface PagedMessages {
+  total: number;
+  page: number;
+  pageSize: number;
+  messages: ParsedMessage[];
+}
+
+export interface Conversation {
+  id: string;
+  displayName?: string | null;
+  sourceTable: string;
+  sourcePk: number;
+  firstSeenUtc?: string | null;
+  lastSeenUtc?: string | null;
+  messageCount: number;
+}
+
+export interface Gap {
+  table: string;
+  column: string;
+  rangeStart: number;
+  rangeEnd: number;
+  size: number;
+  prevPk?: number | null;
+  nextPk?: number | null;
+  source: 'pk_sequence' | 'sqlite_sequence_tail';
+  interpretationNote: string;
+}
+
+export type HintCategory = 'a' | 'b';
+export type EvidenceStrength = 'weak' | 'moderate' | 'strong';
+
+export interface DeletedHint {
+  category: HintCategory;
+  messageId: string;
+  kind: string;
+  evidenceStrength: EvidenceStrength;
+  note: string;
+}
+
+export interface ExportXlsxResult {
+  outputPath: string;
+  bytesWritten: number;
+}

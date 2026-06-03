@@ -24,6 +24,7 @@ export function WorkspacePage() {
   const setEvidences = useCaseStore((s) => s.setEvidences);
   const setScreen = useCaseStore((s) => s.setScreen);
   const setCurrentCase = useCaseStore((s) => s.setCurrentCase);
+  const setAnalyzingEvidenceId = useCaseStore((s) => s.setAnalyzingEvidenceId);
 
   const [preview, setPreview] = useState<EvidencePreview | null>(null);
   const [declaredType, setDeclaredType] = useState('');
@@ -139,6 +140,7 @@ export function WorkspacePage() {
                 <th>{es.workspace.columns.sha256}</th>
                 <th>{es.workspace.columns.sidecars}</th>
                 <th>{es.workspace.columns.ingestedAt}</th>
+                <th></th>
               </tr>
             </thead>
             <tbody>
@@ -154,6 +156,18 @@ export function WorkspacePage() {
                   <td className="mono small">{sidecarBadges(e)}</td>
                   <td className="mono small">
                     {new Date(e.ingestedAt).toISOString().replace('T', ' ').slice(0, 19)}Z
+                  </td>
+                  <td>
+                    <button
+                      type="button"
+                      className="secondary"
+                      onClick={() => {
+                        setAnalyzingEvidenceId(e.evidenceId);
+                        setScreen('analyze');
+                      }}
+                    >
+                      Analizar
+                    </button>
                   </td>
                 </tr>
               ))}

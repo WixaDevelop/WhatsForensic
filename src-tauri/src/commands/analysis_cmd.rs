@@ -1,5 +1,6 @@
 //! Comandos de análisis: descubrir parsers, correr parser, paginar resultados.
 
+use crate::analysis::{self, deleted_hints, gaps, stats, AnalysisFindings};
 use crate::config::{AnalysisRun, AppState};
 use crate::db::{introspect, opener};
 use crate::error::{AppError, AppErrorKind};
@@ -80,6 +81,8 @@ pub struct AnalysisRunSummary {
     pub call_count: usize,
     pub warning_count: usize,
     pub revoked_count: usize,
+    pub gap_count: usize,
+    pub deleted_hint_count: usize,
 }
 
 #[tauri::command]
@@ -106,7 +109,9 @@ pub async fn analysis_run(
 
     let parser = parsers::by_key(&input.parser_key)?;
     let conn = opener::open(&working_path, input.mode).await?;
+    let schema = introspect::snapshot(&conn)?;
     let parsed = parser.parse(&conn)?;
+    let findings = analysis::compute(&conn, &schema, &parsed)?;
     drop(conn);
 
     if matches!(input.mode, opener::OpenMode::WithWal) {
@@ -115,7 +120,8 @@ pub async fn analysis_run(
 
     let run_id = Uuid::new_v4().to_string();
     let parsed_arc = Arc::new(parsed);
-    let summary = build_summary(&run_id, &input, parsed_arc.as_ref());
+    let findings_arc = Arc::new(findings);
+    let summary = build_summary(&run_id, &input, parsed_arc.as_ref(), findings_arc.as_ref());
     state.analysis_runs.write().unwrap().insert(
         run_id.clone(),
         AnalysisRun {
@@ -124,6 +130,7 @@ pub async fn analysis_run(
             parser_key: input.parser_key.clone(),
             mode: input.mode.as_str().to_string(),
             parsed: parsed_arc.clone(),
+            findings: findings_arc.clone(),
         },
     );
 
@@ -142,6 +149,8 @@ pub async fn analysis_run(
             "message_count": summary.message_count,
             "call_count": summary.call_count,
             "warning_count": summary.warning_count,
+            "gap_count": summary.gap_count,
+            "deleted_hint_count": summary.deleted_hint_count,
         }),
     );
 
@@ -160,6 +169,7 @@ fn build_summary(
     run_id: &str,
     input: &AnalysisRunInput,
     parsed: &ParsedEvidence,
+    findings: &AnalysisFindings,
 ) -> AnalysisRunSummary {
     AnalysisRunSummary {
         run_id: run_id.to_string(),
@@ -178,7 +188,45 @@ fn build_summary(
             .iter()
             .filter(|m| m.is_possibly_revoked)
             .count(),
+        gap_count: findings.gaps.len(),
+        deleted_hint_count: findings.deleted_hints.len(),
     }
+}
+
+#[tauri::command]
+pub fn analysis_get_gaps(
+    state: tauri::State<'_, AppState>,
+    run_id: String,
+) -> Result<Vec<gaps::Gap>, AppError> {
+    let guard = state.analysis_runs.read().unwrap();
+    let run = guard
+        .get(&run_id)
+        .ok_or_else(|| AppError::invalid_input("RUN_NOT_FOUND", "Run no encontrado."))?;
+    Ok(run.findings.gaps.clone())
+}
+
+#[tauri::command]
+pub fn analysis_get_deleted_hints(
+    state: tauri::State<'_, AppState>,
+    run_id: String,
+) -> Result<Vec<deleted_hints::DeletedHint>, AppError> {
+    let guard = state.analysis_runs.read().unwrap();
+    let run = guard
+        .get(&run_id)
+        .ok_or_else(|| AppError::invalid_input("RUN_NOT_FOUND", "Run no encontrado."))?;
+    Ok(run.findings.deleted_hints.clone())
+}
+
+#[tauri::command]
+pub fn analysis_get_stats(
+    state: tauri::State<'_, AppState>,
+    run_id: String,
+) -> Result<stats::Stats, AppError> {
+    let guard = state.analysis_runs.read().unwrap();
+    let run = guard
+        .get(&run_id)
+        .ok_or_else(|| AppError::invalid_input("RUN_NOT_FOUND", "Run no encontrado."))?;
+    Ok(run.findings.stats.clone())
 }
 
 // ---------------------------------------------------------------------------

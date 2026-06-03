@@ -8,15 +8,22 @@
 
 import { Channel, invoke } from '@tauri-apps/api/core';
 import type {
+  AnalysisRunSummary,
   AppError,
   CaseCreateInput,
   CaseSummary,
+  DeletedHint,
   EvidenceIngestResult,
   EvidencePreview,
   EvidenceSummary,
+  ExportXlsxResult,
+  Gap,
   IngestProgressEvent,
   IntegrityReport,
   OpenMode,
+  PagedMessages,
+  ParserDescriptor,
+  ParserMatch,
   ProgressEvent,
   SchemaSnapshot,
   SystemInfo,
@@ -102,6 +109,61 @@ export async function introspectEvidence(
   mode: OpenMode,
 ): Promise<SchemaSnapshot> {
   return invoke<SchemaSnapshot>('evidence_introspect', { input: { evidenceId, mode } });
+}
+
+// ---------------------------------------------------------------------------
+// Analysis (Fases 3–5)
+// ---------------------------------------------------------------------------
+
+export async function listParsers(): Promise<ParserDescriptor[]> {
+  return invoke<ParserDescriptor[]>('analysis_list_parsers');
+}
+
+export async function detectParsers(evidenceId: string, mode: OpenMode): Promise<ParserMatch[]> {
+  return invoke<ParserMatch[]>('analysis_detect_parsers', { input: { evidenceId, mode } });
+}
+
+export async function runAnalysis(
+  evidenceId: string,
+  parserKey: string,
+  mode: OpenMode,
+): Promise<AnalysisRunSummary> {
+  return invoke<AnalysisRunSummary>('analysis_run', {
+    input: { evidenceId, parserKey, mode },
+  });
+}
+
+export async function queryMessages(
+  runId: string,
+  page: number,
+  pageSize: number,
+  filter?: string,
+): Promise<PagedMessages> {
+  return invoke<PagedMessages>('analysis_query_messages', {
+    request: { runId, page, pageSize, filter: filter ?? null },
+  });
+}
+
+export async function getGaps(runId: string): Promise<Gap[]> {
+  return invoke<Gap[]>('analysis_get_gaps', { runId });
+}
+
+export async function getDeletedHints(runId: string): Promise<DeletedHint[]> {
+  return invoke<DeletedHint[]>('analysis_get_deleted_hints', { runId });
+}
+
+// ---------------------------------------------------------------------------
+// Export (Fase 6)
+// ---------------------------------------------------------------------------
+
+export async function exportXlsx(
+  runId: string,
+  outputPath: string,
+  includeRawRowJson: boolean,
+): Promise<ExportXlsxResult> {
+  return invoke<ExportXlsxResult>('export_xlsx', {
+    input: { runId, outputPath, includeRawRowJson },
+  });
 }
 
 // ---------------------------------------------------------------------------

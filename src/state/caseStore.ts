@@ -9,7 +9,7 @@
 import { create } from 'zustand';
 import type { CaseSummary, EvidenceSummary } from '../types/domain';
 
-export type Screen = 'home' | 'createCase' | 'workspace';
+export type Screen = 'home' | 'createCase' | 'workspace' | 'analyze';
 
 interface CaseStore {
   screen: Screen;
@@ -20,6 +20,9 @@ interface CaseStore {
 
   evidences: EvidenceSummary[];
   setEvidences: (es: EvidenceSummary[]) => void;
+
+  analyzingEvidenceId: string | null;
+  setAnalyzingEvidenceId: (id: string | null) => void;
 }
 
 export const useCaseStore = create<CaseStore>((set) => ({
@@ -29,4 +32,6 @@ export const useCaseStore = create<CaseStore>((set) => ({
   setCurrentCase: (currentCase) => set({ currentCase }),
   evidences: [],
   setEvidences: (evidences) => set({ evidences }),
+  analyzingEvidenceId: null,
+  setAnalyzingEvidenceId: (analyzingEvidenceId) => set({ analyzingEvidenceId }),
 }));

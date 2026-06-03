@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { getCurrentCase, listEvidence, normalizeAppError } from './api/tauri';
 import { useCaseStore } from './state/caseStore';
+import { AnalyzePage } from './pages/AnalyzePage';
 import { HomePage } from './pages/HomePage';
 import { CaseSetupPage } from './pages/CaseSetupPage';
 import { WorkspacePage } from './pages/WorkspacePage';
@@ -30,6 +31,7 @@ function App() {
   }, [setCurrentCase, setEvidences, setScreen]);
 
   if (screen === 'createCase') return <CaseSetupPage />;
+  if (screen === 'analyze' && currentCase) return <AnalyzePage />;
   if (screen === 'workspace' && currentCase) return <WorkspacePage />;
   return <HomePage />;
 }

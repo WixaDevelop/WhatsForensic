@@ -4,6 +4,7 @@
 //! vía `tauri::State<AppState>`. Mantiene el caso actualmente abierto, su lock
 //! exclusivo y los handles de tareas async cancelables.
 
+use crate::analysis::AnalysisFindings;
 use crate::parsers::common_model::ParsedEvidence;
 use crate::workspace::{layout::CasePaths, manifest::CaseManifest, manifest::LockHandle};
 use std::collections::HashMap;
@@ -24,6 +25,7 @@ pub struct AnalysisRun {
     pub parser_key: String,
     pub mode: String,
     pub parsed: Arc<ParsedEvidence>,
+    pub findings: Arc<AnalysisFindings>,
 }
 
 /// Estado compartido entre comandos.
