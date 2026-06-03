@@ -20,7 +20,7 @@ body {
 }
 
 .container {
-  max-width: 960px;
+  max-width: 1100px;
   margin: 0 auto;
   padding: 2rem;
 }
@@ -35,19 +35,43 @@ h1 {
   letter-spacing: -0.01em;
 }
 
+h2 {
+  font-size: 1rem;
+  margin: 0 0 1rem;
+  color: #333;
+}
+
 .subtitle {
   color: #555;
   margin: 0 0 0.5rem;
 }
 
-.phase {
-  display: inline-block;
+.muted {
+  color: #888;
+}
+
+.small {
+  font-size: 0.85rem;
+}
+
+.mono {
   font-family: ui-monospace, 'JetBrains Mono', 'Consolas', monospace;
-  font-size: 0.8rem;
-  background: #e2e2e2;
-  padding: 2px 8px;
+}
+
+.ok {
+  color: #166534;
+  background: #dcfce7;
+  padding: 1px 8px;
   border-radius: 4px;
-  color: #333;
+  font-size: 0.85rem;
+}
+
+.warn {
+  color: #92400e;
+  background: #fef3c7;
+  padding: 1px 8px;
+  border-radius: 4px;
+  font-size: 0.85rem;
 }
 
 section {
@@ -58,10 +82,19 @@ section {
   border-radius: 6px;
 }
 
-h2 {
-  font-size: 1rem;
-  margin: 0 0 1rem;
-  color: #333;
+.section-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.case-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1rem;
 }
 
 button {
@@ -84,29 +117,142 @@ button:active {
   background: #1e40af;
 }
 
-table {
-  margin-top: 1rem;
-  border-collapse: collapse;
-  font-family: ui-monospace, 'JetBrains Mono', 'Consolas', monospace;
-  font-size: 0.85rem;
+button:disabled {
+  background: #9ca3af;
+  cursor: not-allowed;
 }
 
-td {
-  padding: 5px 14px;
+button.secondary {
+  background: transparent;
+  color: #2563eb;
+  border: 1px solid #2563eb;
+}
+
+button.secondary:hover {
+  background: #eff6ff;
+}
+
+button.secondary:disabled {
+  color: #9ca3af;
+  border-color: #d1d5db;
+}
+
+form label {
+  display: block;
+  margin-bottom: 1rem;
+}
+
+form label span {
+  display: block;
+  color: #444;
+  margin-bottom: 4px;
+  font-weight: 500;
+}
+
+form label small {
+  display: block;
+  color: #888;
+  margin-top: 4px;
+  font-size: 0.8rem;
+}
+
+form input,
+form textarea {
+  width: 100%;
+  border: 1px solid #cbd5e1;
+  border-radius: 4px;
+  padding: 0.5rem 0.7rem;
+  font-size: 0.9rem;
+  font-family: inherit;
+  background: #fff;
+  box-sizing: border-box;
+}
+
+form input:focus,
+form textarea:focus {
+  outline: 2px solid #2563eb;
+  outline-offset: 0;
+  border-color: #2563eb;
+}
+
+.row {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.row.inline {
+  align-items: center;
+}
+
+.row.inline > input {
+  flex: 1;
+  min-width: 200px;
+}
+
+.evidence-table,
+.kv {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.88rem;
+}
+
+.evidence-table th,
+.evidence-table td,
+.kv td {
+  padding: 6px 12px;
   border-bottom: 1px solid #eee;
+  text-align: left;
   vertical-align: top;
 }
 
-td:first-child {
+.evidence-table th {
+  background: #f9fafb;
+  font-weight: 600;
+  color: #444;
+  border-bottom: 1px solid #ddd;
+}
+
+.kv td:first-child {
   color: #666;
   font-family: 'Inter', system-ui, sans-serif;
-  width: 180px;
+  width: 200px;
+}
+
+.hash {
+  font-family: ui-monospace, monospace;
+  font-size: 0.85rem;
+  background: #f1f5f9;
+  padding: 1px 6px;
+  border-radius: 3px;
+}
+
+.preview-card {
+  border-left: 3px solid #2563eb;
+}
+
+.progress-block {
+  margin-top: 1rem;
+}
+
+.progress-bar {
+  background: #e5e7eb;
+  height: 8px;
+  border-radius: 4px;
+  overflow: hidden;
+  margin: 4px 0;
+}
+
+.progress-bar-fill {
+  background: #2563eb;
+  height: 100%;
+  transition: width 100ms linear;
 }
 
 .progress-line {
-  margin-top: 1rem;
-  font-family: ui-monospace, 'JetBrains Mono', 'Consolas', monospace;
-  font-size: 0.9rem;
+  font-family: ui-monospace, monospace;
+  font-size: 0.85rem;
+  margin: 0;
 }
 
 .error {
@@ -129,21 +275,53 @@ td:first-child {
     background: #262626;
     border-color: #404040;
   }
-  .phase {
-    background: #404040;
+  h2,
+  form label span {
     color: #d4d4d4;
   }
-  h2 {
-    color: #d4d4d4;
-  }
-  .subtitle {
+  .subtitle,
+  .muted {
     color: #a3a3a3;
   }
-  td {
+  form input,
+  form textarea {
+    background: #1a1a1a;
+    color: #e5e5e5;
+    border-color: #404040;
+  }
+  .evidence-table th {
+    background: #1f2937;
+    color: #d4d4d4;
     border-color: #303030;
   }
-  td:first-child {
+  .evidence-table td,
+  .kv td {
+    border-color: #303030;
+  }
+  .kv td:first-child {
     color: #a3a3a3;
+  }
+  .hash {
+    background: #1f2937;
+  }
+  button.secondary {
+    background: transparent;
+    color: #60a5fa;
+    border-color: #60a5fa;
+  }
+  button.secondary:hover {
+    background: #1e3a8a;
+  }
+  .ok {
+    background: #14532d;
+    color: #bbf7d0;
+  }
+  .warn {
+    background: #78350f;
+    color: #fef3c7;
+  }
+  .progress-bar {
+    background: #404040;
   }
   .error {
     color: #fecaca;

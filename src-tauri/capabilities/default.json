@@ -3,5 +3,15 @@
   "identifier": "default",
   "description": "Default capability for the main window of WhatsForensics. Capability-scoped permissions are added per-command as features grow.",
   "windows": ["main"],
-  "permissions": ["core:default"]
+  "permissions": [
+    "core:default",
+    "dialog:default",
+    "fs:default",
+    "fs:allow-app-read",
+    "fs:allow-app-write",
+    "fs:allow-app-meta",
+    "fs:allow-appdata-read",
+    "fs:allow-appdata-write",
+    "fs:allow-appdata-meta"
+  ]
 }

@@ -1,93 +1,37 @@
-import { useState } from 'react';
-import { getSystemInfo, normalizeAppError, runProgressDemo } from './api/tauri';
-import type { AppError, SystemInfo } from './types/domain';
-import { es } from './i18n/es';
+import { useEffect } from 'react';
+import { getCurrentCase, listEvidence, normalizeAppError } from './api/tauri';
+import { useCaseStore } from './state/caseStore';
+import { HomePage } from './pages/HomePage';
+import { CaseSetupPage } from './pages/CaseSetupPage';
+import { WorkspacePage } from './pages/WorkspacePage';
 import './App.css';
 
 function App() {
-  const [info, setInfo] = useState<SystemInfo | null>(null);
-  const [progress, setProgress] = useState<number | null>(null);
-  const [error, setError] = useState<AppError | null>(null);
+  const screen = useCaseStore((s) => s.screen);
+  const currentCase = useCaseStore((s) => s.currentCase);
+  const setCurrentCase = useCaseStore((s) => s.setCurrentCase);
+  const setEvidences = useCaseStore((s) => s.setEvidences);
+  const setScreen = useCaseStore((s) => s.setScreen);
 
-  async function handleSystemCheck() {
-    setError(null);
-    try {
-      setInfo(await getSystemInfo());
-    } catch (e) {
-      setError(normalizeAppError(e));
-    }
-  }
+  useEffect(() => {
+    void (async () => {
+      try {
+        const c = await getCurrentCase();
+        if (c) {
+          setCurrentCase(c);
+          setScreen('workspace');
+          const es = await listEvidence();
+          setEvidences(es);
+        }
+      } catch (e) {
+        console.error('initial sync failed', normalizeAppError(e));
+      }
+    })();
+  }, [setCurrentCase, setEvidences, setScreen]);
 
-  async function handleProgressDemo() {
-    setError(null);
-    setProgress(0);
-    try {
-      await runProgressDemo((evt) => setProgress(evt.percent));
-    } catch (e) {
-      setError(normalizeAppError(e));
-    }
-  }
-
-  return (
-    <main className="container">
-      <header>
-        <h1>{es.app.title}</h1>
-        <p className="subtitle">{es.app.subtitle}</p>
-        <span className="phase">{es.app.phase}</span>
-      </header>
-
-      <section>
-        <h2>{es.system.sectionTitle}</h2>
-        <button type="button" onClick={handleSystemCheck}>
-          {es.system.requestInfo}
-        </button>
-        {info && (
-          <table>
-            <tbody>
-              <tr>
-                <td>{es.system.fields.toolName}</td>
-                <td>{info.toolName}</td>
-              </tr>
-              <tr>
-                <td>{es.system.fields.toolVersion}</td>
-                <td>{info.toolVersion}</td>
-              </tr>
-              <tr>
-                <td>{es.system.fields.rustEdition}</td>
-                <td>{info.rustEdition}</td>
-              </tr>
-              <tr>
-                <td>{es.system.fields.targetOs}</td>
-                <td>{info.targetOs}</td>
-              </tr>
-              <tr>
-                <td>{es.system.fields.targetArch}</td>
-                <td>{info.targetArch}</td>
-              </tr>
-            </tbody>
-          </table>
-        )}
-      </section>
-
-      <section>
-        <h2>{es.progress.sectionTitle}</h2>
-        <button type="button" onClick={handleProgressDemo}>
-          {es.progress.runDemo}
-        </button>
-        {progress !== null && (
-          <p className="progress-line">
-            {es.progress.currentLabel}: {progress}%
-          </p>
-        )}
-      </section>
-
-      {error && (
-        <p className="error">
-          {es.errors.prefix} [{error.code}]: {error.message}
-        </p>
-      )}
-    </main>
-  );
+  if (screen === 'createCase') return <CaseSetupPage />;
+  if (screen === 'workspace' && currentCase) return <WorkspacePage />;
+  return <HomePage />;
 }
 
 export default App;

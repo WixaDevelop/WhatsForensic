@@ -1,33 +1,81 @@
 /**
- * Diccionario de textos en español. Centralizado desde el inicio aunque haya
- * un único idioma, para evitar refactor masivo cuando se agregue otro.
- *
- * Convención: claves anidadas por sección (`app.title`, `errors.io`, ...).
+ * Diccionario de textos en español.
  */
 
 export const es = {
   app: {
     title: 'WhatsForensics',
     subtitle: 'Análisis forense de bases SQLite móviles',
-    phase: 'Fase 0 — Fundaciones',
   },
-  system: {
-    sectionTitle: 'Verificación del backend',
-    requestInfo: 'Solicitar información del sistema',
-    fields: {
-      toolName: 'Herramienta',
-      toolVersion: 'Versión',
-      rustEdition: 'Edición Rust',
-      targetOs: 'Sistema operativo',
-      targetArch: 'Arquitectura',
+  home: {
+    welcome: 'Sin caso abierto',
+    createNew: 'Crear caso nuevo',
+    openExisting: 'Abrir caso existente',
+    pickCaseDir: 'Elegir directorio del caso',
+    chooseCaseFolder: 'Elegí la carpeta del caso (la que contiene case.json)',
+  },
+  caseSetup: {
+    title: 'Crear nuevo caso',
+    name: 'Nombre del caso',
+    namePlaceholder: 'ej. Operativo Norte 2026',
+    description: 'Descripción (opcional)',
+    descriptionPlaceholder: 'Notas internas sobre el caso',
+    investigator: 'Investigador',
+    investigatorPlaceholder: 'Nombre y apellido',
+    timezone: 'Zona horaria (IANA)',
+    timezoneHint: 'ej. America/Argentina/Buenos_Aires',
+    workspaceRoot: 'Directorio raíz del workspace',
+    workspaceRootHint: 'Donde se creará el directorio del caso. Puede ser un disco externo.',
+    pickWorkspace: 'Elegir directorio',
+    createButton: 'Crear caso',
+    cancel: 'Cancelar',
+  },
+  workspace: {
+    sectionEvidence: 'Evidencias',
+    addEvidence: 'Agregar evidencia',
+    close: 'Cerrar caso',
+    noEvidence: 'Aún no hay evidencia ingresada en este caso.',
+    columns: {
+      filename: 'Archivo',
+      size: 'Tamaño',
+      sha256: 'SHA-256 (pristine)',
+      ingestedAt: 'Ingresada',
+      sidecars: 'Hermanos',
     },
   },
-  progress: {
-    sectionTitle: 'Patrón de progreso (Channel)',
-    runDemo: 'Ejecutar demo',
-    currentLabel: 'Progreso',
+  ingest: {
+    title: 'Agregar evidencia',
+    pickFile: 'Elegir archivo SQLite',
+    pickFileHint: 'WhatsApp, CallHistory u otra base SQLite descifrada',
+    previewing: 'Analizando archivo...',
+    headerValid: 'Header SQLite válido',
+    headerInvalid: 'El archivo no parece ser una base SQLite válida',
+    pageSize: 'Tamaño de página',
+    fileSize: 'Tamaño',
+    sidecarsDetected: 'Hermanos detectados',
+    declaredType: 'Tipo declarado (opcional)',
+    declaredTypePlaceholder: 'ej. WhatsApp iOS',
+    confirmIngest: 'Confirmar e ingresar',
+    cancel: 'Cancelar',
+    inProgress: 'Ingestando...',
+    progressLabel: 'Progreso',
+    stepLabels: {
+      hashing_original: 'Hasheando original',
+      hashing_pristine: 'Hasheando copia pristine',
+      hashing_working: 'Hasheando copia working',
+      hashing_sidecar: 'Hasheando hermano',
+    },
   },
   errors: {
     prefix: 'Error',
+  },
+  common: {
+    bytes: 'bytes',
+    kib: 'KiB',
+    mib: 'MiB',
+    gib: 'GiB',
+    yes: 'Sí',
+    no: 'No',
+    none: '—',
   },
 } as const;

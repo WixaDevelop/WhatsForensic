@@ -29,7 +29,7 @@ export interface ProgressEvent {
 }
 
 // ---------------------------------------------------------------------------
-// Errores serializables (Fase 0)
+// Errores serializables
 // ---------------------------------------------------------------------------
 
 export type AppErrorKind =
@@ -48,14 +48,103 @@ export interface AppError {
 }
 
 // ---------------------------------------------------------------------------
-// Modelo de dominio (placeholders para Fase 1+)
+// Caso (Fase 1)
 // ---------------------------------------------------------------------------
 
-/** Modo de apertura de la base SQLite working. */
+export interface CaseSummary {
+  caseId: string;
+  name: string;
+  description?: string | null;
+  investigator: string;
+  timezone: string;
+  createdAt: string;
+  toolVersion: string;
+  caseDir: string;
+  evidenceCount: number;
+}
+
+export interface CaseCreateInput {
+  name: string;
+  description?: string | null;
+  investigator: string;
+  timezone: string;
+  workspaceRoot: string;
+}
+
+// ---------------------------------------------------------------------------
+// Evidencia (Fase 1)
+// ---------------------------------------------------------------------------
+
+export interface SqliteHeader {
+  validMagic: boolean;
+  pageSize: number;
+  fileSize: number;
+}
+
+export interface SidecarSet {
+  wal?: string | null;
+  shm?: string | null;
+  journal?: string | null;
+}
+
+export interface EvidencePreview {
+  originalPath: string;
+  size: number;
+  header: SqliteHeader;
+  sidecars: SidecarSet;
+}
+
+export interface EvidenceSummary {
+  evidenceId: string;
+  filename: string;
+  sourceType?: string | null;
+  originalSize: number;
+  originalSha256: string;
+  pristineSha256: string;
+  workingSha256: string;
+  hasWal: boolean;
+  hasShm: boolean;
+  hasJournal: boolean;
+  ingestedAt: string;
+}
+
+export interface HashProgress {
+  bytesDone: number;
+  bytesTotal: number;
+  percent: number;
+}
+
+export type IngestStep =
+  | 'hashing_original'
+  | 'hashing_pristine'
+  | 'hashing_working'
+  | 'hashing_sidecar';
+
+export interface IngestProgressEvent {
+  runId: string;
+  step: IngestStep;
+  progress: HashProgress;
+}
+
+export interface EvidenceIngestResult {
+  runId: string;
+  evidenceId: string;
+}
+
+export interface IntegrityReport {
+  evidenceId: string;
+  pristineMatches: boolean;
+  workingMatches: boolean;
+  expectedPristineSha256: string;
+  actualPristineSha256: string;
+  expectedWorkingSha256: string;
+  actualWorkingSha256: string;
+}
+
+// ---------------------------------------------------------------------------
+// Modelo de dominio (placeholders para Fase 2+)
+// ---------------------------------------------------------------------------
+
 export type AnalysisMode = 'committed_only' | 'with_wal';
-
-/** Dirección de un mensaje en una conversación. */
 export type MessageDirection = 'incoming' | 'outgoing' | 'unknown';
-
-/** Formato del valor crudo de un timestamp en una columna. */
 export type TimestampRawFormat = 'mac_absolute' | 'unix_s' | 'unix_ms';

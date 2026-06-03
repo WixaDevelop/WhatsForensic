@@ -18,6 +18,8 @@ tauri-build = { version = "2", features = [] }
 [dependencies]
 # Tauri runtime
 tauri = { version = "2", features = [] }
+tauri-plugin-dialog = "2"
+tauri-plugin-fs = "2"
 
 # Serialization
 serde = { version = "1", features = ["derive"] }
@@ -49,12 +51,21 @@ chrono-tz = "0.10"
 # Filesystem
 walkdir = "2"
 fs2 = "0.4"  # cross-platform file locking (Win + Linux)
+dunce = "1"  # canonicalize without UNC prefix on Windows
+dirs = "5"  # cross-platform user dirs (data_dir, config_dir, ...)
+
+# User identification (for audit log actor field)
+whoami = "1"
+
+# Hex encoding (for SHA-256 strings)
+hex = "0.4"
 
 # Schema mapping (externalized per-version TOML files)
 toml = "1"
 
 [dev-dependencies]
 tempfile = "3"
+assert_fs = "1"
 
 [profile.release]
 codegen-units = 1

@@ -29,19 +29,28 @@ pub fn run() {
     );
 
     tauri::Builder::default()
+        .plugin(tauri_plugin_dialog::init())
+        .plugin(tauri_plugin_fs::init())
         .manage(AppState::default())
         .invoke_handler(tauri::generate_handler![
             commands::system_cmd::system_info,
             commands::system_cmd::progress_demo,
+            commands::case_cmd::case_create,
+            commands::case_cmd::case_open,
+            commands::case_cmd::case_close,
+            commands::case_cmd::case_get_current,
+            commands::evidence_cmd::evidence_preview,
+            commands::evidence_cmd::evidence_ingest,
+            commands::evidence_cmd::evidence_list,
+            commands::evidence_cmd::evidence_verify,
+            commands::evidence_cmd::task_cancel,
+            commands::evidence_cmd::default_workspace_root,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
 
 /// Configura `tracing` con filtro por env var `WF_LOG` (default: `info`).
-///
-/// En esta fase solo escribe a stdout. En fase 1 añadiremos `tracing-appender`
-/// con rotación diaria sobre el directorio de logs por plataforma.
 fn init_tracing() {
     use tracing_subscriber::{fmt, prelude::*, EnvFilter};
 
